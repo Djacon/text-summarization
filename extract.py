@@ -5,12 +5,12 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 
 import numpy as np
 
-nltk.download('punkt')
+# nltk.download('punkt')
 
 STOPLST = stopwords.words('english') + stopwords.words('russian')
 
 
-def get_text(filename):
+def load_text(filename):
     with open(filename, encoding='utf-8') as f:
         text = f.read()
     return text
