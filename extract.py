@@ -1,4 +1,3 @@
-import nltk
 from nltk.corpus import stopwords
 from nltk.cluster.util import cosine_distance
 from nltk.tokenize import sent_tokenize, word_tokenize
@@ -36,27 +35,39 @@ def similarity(sent1, sent2):
     return cosine_distance(vector1, vector2)
 
 
+# def build_matrix(sentences):
+#     sents = preprocess(sentences)
+#     size = len(sents)
+#     mat = np.zeros((size, size))
+#     for i in range(size):
+#         for j in range(i+1, size):
+#             sim = similarity(sents[i], sents[j])
+#             mat[i, j] = sim
+#             mat[j, i] = sim
+#     importance = np.mean(mat, axis=0)
+#     return importance
+
+
 def build_matrix(sentences):
     sents = preprocess(sentences)
     size = len(sents)
-    mat = np.zeros((size, size))
+    mat = np.zeros(size)
     for i in range(size):
         for j in range(i+1, size):
             sim = similarity(sents[i], sents[j])
-            mat[i, j] = sim
-            mat[j, i] = sim
-    return mat
+            mat[i] += sim
+            mat[j] += sim
+    return mat / size
 
 
-def get_pagerank(mat, top_k):
-    importance = np.mean(mat, axis=0)
+def get_pagerank(importance, top_k):
     idx = importance.argsort()[:top_k]
     idx.sort()
     return idx
 
 
 def summarize_text(text: str, top_k: int = 20) -> str:
-    sentences = sent_tokenize(text)[:1000]
+    sentences = sent_tokenize(text)[:2000]
     mat = build_matrix(sentences)
     idx = get_pagerank(mat, top_k)
     return '\n'.join(sentences[i] for i in idx)
